@@ -1,1 +1,0 @@
-# beego_admin
