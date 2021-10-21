@@ -1,0 +1,145 @@
+{{template "admin/public/style.html" .}}
+<div class="admin-main">
+	<div class="layui-form">
+		<blockquote class="layui-elem-quote" style="font-size: 12px;">
+			<div>
+				<div class="layui-form-item" style="margin-bottom: 0px;">
+					<div class="layui-input-inline">
+						<a class="layui-btn layui-btn-normal" href='/admin/system/add_role'>新增角色</a>
+					</div>
+					<div class="layui-input-inline" style="float:right;width:auto;">
+						<input type="text" class="layui-input" style="display: inline;width:200px" name="keywords" id="keywords" value="" placeholder="输入角色名称" autocomplete="off">
+						<button class="layui-btn" id="search" type='button' onclick="search()">
+							查询
+						</button>
+					</div>
+				</div>
+			</div>
+		</blockquote>
+		<table id="dataTable" class="layui-hide" lay-filter="dataTable"></table>
+		<script type="text/html" id="options">
+			<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">编辑</a>
+			<a class="layui-btn layui-bg-cyan layui-btn-xs" lay-event="authority">权限分配</a>
+			<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+		</script>
+	</div>
+</div>
+<script>
+	layui.use(['layer', 'form','table'], function() { //独立版的layer无需执行这一句
+		var $ = layui.jquery,
+				form = layui.form,
+				table = layui.table,
+				layer = layui.layer; //独立版的layer无需执行这一句
+
+		var dataTable = table.render({
+			elem: '#dataTable'
+			,url: "/admin/system/get_role_list" //数据接口
+			,skin:'line'
+			,cellMinWidth: 150
+			,text: { //自定义文本，此处用法--》当返回数据为空时的异常提示
+				none: '暂无相关数据' //默认：无数据。注：该属性为 layui 2.2.5 开始新增
+			}
+			,autoSort: false
+			,sortType: 'server'
+			,page: {
+				curr:1,
+				limit:10
+			} //开启分页
+			,cols: [[ //表头
+				{field: 'name', align:'center',title: '角色名称'}
+				,{field: 'desc', align:'center',title: '描述'}
+				,{field: 'create_time',align:'center', title: '创建时间'}
+				,{fixed: 'right',align:'center',title:'操作', toolbar: '#options',width:'200'}
+			]]
+			, done: function(res, curr, count){
+				var i = 0;
+				$(".layui-table-main  tr").each(function (index ,val) {
+					if (typeof $(val).attr('data-index') !== typeof undefined && $(val).attr('data-index') !== false) {
+						$($(".layui-table-fixed .layui-table-body tbody tr")[i]).height($(val).height());
+						i++;
+					}
+				});
+			}
+		});
+		window.search = function () {
+			TableReload();
+		}
+		table.on('tool(dataTable)', function(obj){ //注：tool是工具条事件名，dataTable是table原始容器的属性 lay-filter="对应的值"
+			var data = obj.data //获得当前行数据
+					,layEvent = obj.event; //获得 lay-event 对应的值
+			if(layEvent === 'delete'){
+				layer.confirm('您确认要删除吗？',{ icon: 3, title: '温馨提示', skin: 'layui-skin'}, function(index){
+					$.post("/admin/system/delete_role",{_method:'post',id:data.id},function (data) {
+						if (data.code == 2) {
+							layer.msg(data.message, {
+								time: 2000
+							}, function () {
+								TableReload();
+							})
+						} else {
+							layer.msg(data.message);
+						}
+						layer.close(index);
+					});
+				});
+			} else if(layEvent === 'edit'){
+				location.href = '/admin/system/edit_role?id='+data.id;
+			} else if(layEvent === 'authority'){
+				location.href = '/admin/system/authority?id='+data.id;
+			}
+		});
+
+		//刷新区审列表
+		function TableReload(){
+			table.reload('dataTable', {
+				page: {
+					curr: 1 //重新从第 1 页开始
+				},
+				where: {
+					keywords:$("#keywords").val()
+				},
+				done: function(res, curr, count) {
+				}
+			})
+		}
+	});
+	//审核
+	function deleteUser(id) {
+		layer.confirm('您确定要删除吗?',{
+			icon: 3,
+			title: '温馨提示'
+		}, function(index) {
+			$.ajax({
+				url: "/admin/system/deleteUser",
+				type: "DELETE",
+				data:{
+					id:id,
+					__token__:$('input[name="__token__"]').val()
+				}
+			}).done(function(data) {
+				if(data.result == 0) {
+					layer.msg(data.message, {
+						icon: 1,
+						time: 3000
+					}, function() {
+						location.href = data.reData.url;
+					});
+				} else {
+					layer.msg(data.message, {
+						icon: 2,
+						time: 3000
+					}, function () {
+						window.getToken();
+					});
+				}
+			}).error(function(data) {
+				layer.msg('错误', {
+					icon: 2,
+					content: '服务器错误'
+				},function () {
+					window.getToken();
+				});
+			});
+		});
+	}
+</script>

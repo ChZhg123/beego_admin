@@ -1,0 +1,60 @@
+.layui-layout.layui-layout-admin{
+    border-bottom: solid 2px #fff;
+}
+
+.layui-layout-admin .header-demo{
+    background-color: #69a1eb;
+    border-bottom-color: #fff;
+}
+
+.layui-nav-tree .layui-nav-child dd.layui-this, .layui-nav-tree .layui-nav-child dd.layui-this a, .layui-nav-tree .layui-this, .layui-nav-tree .layui-this>a, .layui-nav-tree .layui-this>a:hover{
+    background-color: #69a1eb;
+}
+
+.layui-nav .layui-nav-child dd.layui-this a, .layui-nav-child dd.layui-this{
+    background-color: #69a1eb;
+}
+
+.admin-nav-card>.layui-tab-title .layui-this{
+    background-color: #69a1eb;
+}
+
+.admin-nav-card>.layui-tab-title{
+    background-color: #ffffff;
+    border-bottom: 1px solid #aaaaaa;
+    box-shadow:1px 1px 2px #69a1eb;
+}
+
+.admin-nav-card {
+    margin-top: 0px;
+}
+
+.layui-layout-admin .layui-body{
+    border-left: 2px solid #69a1eb;
+    border-top: 1px solid #fff;
+}
+
+.layui-nav-tree .layui-nav-bar{
+    background-color: #69a1eb;
+}
+
+.header-demo .layui-nav .layui-nav-item a:hover,.header-demo .layui-nav .layui-this a{
+    color: #ffffff
+}
+
+.admin-side-toggle, .admin-side-full{
+    background-color:#69a1eb;
+}
+.admin-side-toggle:hover{
+    background-color: #69a1eb;
+}
+
+.header-demo .layui-nav .layui-this{
+    background-color: #69a1eb;
+}
+.header-demo .layui-nav-bar{
+    display: none;
+}
+.admin-header-item .layui-nav-item .layui-nav-child dd a:hover{
+    background: #69a1eb;
+}

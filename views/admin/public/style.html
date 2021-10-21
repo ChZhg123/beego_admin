@@ -1,0 +1,215 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>子页面</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="/static/css/global.css" media="all">
+    <link rel="stylesheet" href="/static/plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/plugins/viewer/viewer.css" media="all" />
+    <link rel="stylesheet" href="/static/plugins/layui/css/layui.css" media="all" />
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/plugins/layui/layui.js"></script>
+    <script src="/static/plugins/viewer/viewer.js"></script>
+</head>
+<style>
+
+    .site-table tbody tr td {text-align: center;}
+    .site-table tbody tr td .layui-btn+.layui-btn{margin-left: 0px;}
+    .admin-table-page {position: fixed;z-index: 19940201;bottom: 0;width: 100%;background-color: #eee;border-bottom: 1px solid #ddd;left: 0px;}
+    .admin-table-page .page{padding-left:20px;}
+    .admin-table-page .page .layui-laypage {margin: 6px 0 0 0;}
+    .table-hover tbody tr:hover{ background-color: #EEEEEE; }
+
+    .layui-btn.layui-btn-xs{
+        margin:5px;
+    }
+    .admin-table .layui-form-checkbox{
+        margin-top: 0;
+        height: 20px;
+        line-height: 20px;
+    }
+    a:link,a:visited{
+        text-decoration:none;  /*超链接无下划线*/
+    }
+    /* 自定义样式 */
+    /*输入框必选项样式*/
+    .layui-form-label.layui-required:before{
+        content:"*";
+        color:red;
+    }
+    /*上传按钮样式*/
+    .layui-form .blog-btn-file {
+        float: left;
+        background: #aaa;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        width: 60px;
+        height: 60px;
+        padding: 5px;
+        position: relative;
+        border-radius: 2px;
+    }
+
+    .layui-form .blog-btn-file input:hover {
+        cursor: pointer;
+    }
+
+    .layui-form .blog-btn-file input[type=file] {
+        opacity: 0;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0px;
+        left: 0px;
+    }
+
+    .layui-form .blog-btn-file .blog-btn-name {
+        text-align: center;
+        background: #ecf0f5;
+        width:100%;
+        height: 100%;
+    }
+
+    .layui-form .blog-btn-file p {
+        height: 30px;
+        line-height: 45px;
+        font-size: 20px;
+    }
+
+    .layui-form .blog-btn-file h1 {
+        font-size: 12px;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    .layui-form .blog-file-image {
+        float: left;
+        background: #ffffff;
+        width: 70px;
+        height: 70px;
+        padding: 0px;
+        margin-right: 10px;
+        border-radius: 2px;
+        position: relative;
+    }
+
+    .layui-form .blog-file-image img {
+        width: 100%;
+        height: 100%;
+    }
+
+    .layui-form .blog-file-image p {
+        position: absolute;
+        bottom: 0px;
+        left: 0px;
+        width: 68px;
+        height: 14px;
+        line-height: 12px;
+        color: #ffffff;
+        background: #000000;
+        opacity: 0.7;
+        padding: 1px;
+        font-size: 12px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .layui-form .blog-file-images{
+        float: left;
+        position: relative;
+        margin-bottom: 10px;
+    }
+    .layui-form .blog-file-images,
+    .layui-form .blog-file-images> :not(.dragging) {
+        -webkit-transition: all 0.4s ease-in-out;
+        -moz-transition: all 0.4s ease-in-out;
+        transition: all 0.4s ease-in-out;
+    }
+
+    .layui-form .blog-file-images .dragging {
+        z-index: 800;
+    }
+    .layui-form .blog-file-images em {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        /* padding: 0px 5px; */
+        font-size: 18px;
+        text-align: center;
+        line-height: 16px;
+        width: 20px;
+        height: 20px;
+        background: #000;
+        opacity: 0.8;
+        color: #ffffff;
+        border-radius: 0px 0px 0px 30px;
+    }
+    .layui-form .blog-file-images em:hover{
+        cursor: pointer;
+    }
+    .layui-form .blog-file-image em {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        /* padding: 0px 5px; */
+        font-size: 18px;
+        text-align: center;
+        line-height: 16px;
+        width: 20px;
+        height: 20px;
+        background: #000;
+        opacity: 0.8;
+        color: #ffffff;
+        border-radius: 0px 0px 0px 30px;
+    }
+    .layui-form .blog-file-image em:hover{
+        cursor: pointer;
+    }
+</style>
+<script>
+    layui.use(['layer'], function() {
+        var $ = layui.jquery;
+        $('.viewer').viewer();
+        //上传图片回调
+        window.uploadBack = function (file) {
+            /*图片类型正则验证*/
+            if (!file) {
+                layer.msg('请上传图片');
+                return false;
+            }
+            var imgStr = /\.(jpg|jpeg|png|bmp|BMP|JPG|PNG|JPEG)$/;
+            if (!imgStr.test(file.name)) {
+                layer.msg('请上传图片类型');
+                return false;
+            }
+            var path = getObjectURL(file);
+            return path;
+        }
+        //获取图片url路径
+        window.getObjectURL = function (file) {
+            var url = null;
+            if (window.createObjectURL != undefined) {
+                // basic
+                url = window.createObjectURL(file);
+            } else if (window.URL != undefined) {
+                // mozilla(firefox)
+                url = window.URL.createObjectURL(file);
+            } else if (window.webkitURL != undefined) {
+                // webkit or chrome
+                url = window.webkitURL.createObjectURL(file);
+            }
+            return url;
+        }
+
+    });
+</script>
+<body>
+
+

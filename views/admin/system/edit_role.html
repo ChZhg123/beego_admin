@@ -1,0 +1,59 @@
+{{template "admin/public/style.html" .}}
+<div class="admin-main">
+	<div class="layui-form">
+		<div class="layui-form-item">
+			<label class="layui-form-label layui-required">角色名称</label>
+			<div class="layui-input-block">
+				<input type="hidden" name="id" value="{{.role.Id}}">
+				<input type="text" name="name" placeholder="请输入角色名称" value="{{.role.Name}}" autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">角色简介</label>
+			<div class="layui-input-block">
+				<textarea name="desc" id="" class="layui-textarea">{{.role.Desc}}</textarea>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit="" lay-filter="submit">提交</button>
+				<button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="javascript:history.go(-1)">返回</button>
+			</div>
+		</div>
+	</div>
+	<script>
+		layui.use(['layer', 'form'], function() {
+			var $ = layui.jquery,
+					form = layui.form,
+					layer = layui.layer; //独立版的layer无需执行这一句
+			//提交
+			form.on('submit(submit)', function(data) {
+				layer.confirm('您确定要提交吗?', {
+					icon: 3,
+					title: '温馨提示'
+				}, function(index) {
+					$.ajax({
+						url: "/admin/system/edit_role",
+						type: "POST",
+						data: data.field,
+					}).done(function (data) {
+						if (data.code == 2) {
+							layer.msg(data.message, {
+								icon: 1,
+								time: 3000
+							}, function () {
+								location.href = "/admin/system/roleList";
+							});
+						} else {
+							layer.msg(data.message, {
+								icon: 2,
+								time: 3000
+							});
+						}
+					}).error(function (data) {
+						layer.msg('服务异常');
+					});
+				});
+			});
+		});
+	</script>

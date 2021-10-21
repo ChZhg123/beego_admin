@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>{{.base.name}}</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="_xsrf" content="{{ .xsrfdata }}" />
+    <link rel="shortcut icon" href="/static/img/logo.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/static/plugins/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="/static/css/global.css" media="all">
+    <link rel="stylesheet" href="/static/plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" media="screen" href="/static/css/background.css">
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/plugins/layui/layui.js"></script>
+</head>
+
+<body>
+<style>
+</style>
+<div class="layui-layout layui-layout-admin">
+    {{template "admin/public/header.html" .}}
+    <div class="layui-side layui-bg-black" id="admin-side">
+        <div class="layui-side-scroll" id="admin-navbar-side" lay-filter="side"></div>
+    </div>
+    <div class="layui-body" style="bottom: 0;" id="admin-body">
+        <div class="layui-tab admin-nav-card layui-tab-brief" lay-filter="admin-tab">
+            <ul class="layui-tab-title">
+                <li class="layui-this">
+                    <i class="fa fa-home" aria-hidden="true"></i>
+                    <cite>首页</cite>
+                </li>
+            </ul>
+            <div class="layui-tab-content" style="min-height: 150px; padding: 5px 0 0 0;">
+                <div class="layui-tab-item layui-show">
+                    <iframe src="/admin/iframe"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{template "admin/public/bottom.html" .}}
+    <div class="site-tree-mobile layui-hide">
+        <i class="layui-icon">&#xe602;</i>
+    </div>
+    <div class="site-mobile-shade"></div>
+</div>
+<script>
+    var navs = {{.base.powers}};
+    console.log(navs)
+    var path="/static/";
+</script>
+<script src="/static/js/index.js"></script>
+</body>
+</html>

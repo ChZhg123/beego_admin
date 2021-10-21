@@ -1,0 +1,151 @@
+{{template "admin/auth/base.html" .}}
+<style>
+	.remember{
+		margin-top:10px;
+	}
+	.remember .login-center-input{
+		margin-left: 2px;
+		color:#333333;
+		width: 100%;
+	}
+	.remember .login-center-input:hover{
+		cursor: pointer;
+	}
+	.remember input{
+		width:15px;
+		height: 15px;
+		vertical-align: middle;
+	}
+	.remember label{
+		font-size: 12px;
+	}
+	.remember .auto{
+		float: right;
+		margin-right: 5px;
+		cursor: pointer;
+	}
+	.captcha img{
+		width:100px;
+		height: 30px;
+	}
+</style>
+<div id="particles-js">
+	<div class="login">
+		<div class="login-top">
+			<div class="head-pic"><img src="/static/img/logo.png" alt=""></div>
+		</div>
+		<div class="login-center clearfix">
+			<div class="login-center-img"><img src="/static/img/name.png" /></div>
+			<div class="login-center-input">
+				<input type="text" id="username" value="" placeholder="请输入您的用户名" onfocus="this.placeholder=''" onblur="this.placeholder='请输入您的用户名'" />
+				<div class="login-center-input-text">用户名</div>
+			</div>
+		</div>
+		<div class="login-center clearfix">
+			<div class="login-center-img"><img src="/static/img/password.png" /></div>
+			<div class="login-center-input">
+				<input type="password" id="password" value="" placeholder="请输入您的密码" autocomplete="new-password" onfocus="this.placeholder=''" onblur="this.placeholder='请输入您的密码'" />
+				<div class="login-center-input-text">密码</div>
+			</div>
+		</div>
+		<div class="login-center clearfix" style="margin-bottom:0px;">
+			<div class="login-center-img"><img src="/static/img/captcha.png" /></div>
+			<div class="login-center-input login-captcha">
+				<input type="text" id="captcha" name="captcha" autocomplete="off" placeholder="请输入验证码" onfocus="this.placeholder=''" onblur="this.placeholder='请输入您的密码'" />
+				<div class="login-center-input-text">验证码</div>
+			</div>
+			{{create_captcha}}
+		</div>
+		<div class="login-center remember">
+			<div class="login-center-input">
+				<label><input type="checkbox" id="remember" value="1">&nbsp;记住我</label>
+			</div>
+		</div>
+		<div class="login-button">
+			登录
+		</div>
+	</div>
+	<div class="sk-rotating-plane"></div>
+</div>
+<script src="/static/js/particles.min.js"></script>
+<script src="/static/js/app.js"></script>
+<script type="text/javascript">
+	layui.use('layer', function () {
+		var layer = layui.layer,
+		$ = layui.$;
+		//记住密码点击事件
+		$('#remember').click(function(){
+			var checked = $(this).prop('checked');
+			if(checked){
+				$(this).val(2);
+			}else{
+				$(this).val(1);
+			}
+		})
+		//回车键点击事件
+		$(document).keydown(function (event) {
+			if (event.keyCode == 13) {
+				$(".login-button").click();
+			}
+		});
+		$('.login-button').click(function () {
+			var username = $('#username').val();
+			var password = $('#password').val();
+			var captcha = $('input[name="captcha"]').val();
+			var captcha_id = $('input[name="captcha_id"]').val();
+			if (!username) {
+				layer.tips('请输入用户名', '#username', { tips: 1 });
+				return false;
+			}
+			if (!password) {
+				layer.tips('请输入密码', '#password', { tips: 1 });
+				return false;
+			}
+			//密码加密
+			if (!captcha) {
+				layer.tips('请输入验证码', '#captcha', { tips: 1 });
+				return false;
+			}
+			$.ajax({
+				type: "POST",
+				dataType: "json",
+				url: "/admin/login",
+				data: {
+					'username': username,
+					'password': password,
+					'captcha': captcha,
+					'captcha_id': captcha_id,
+					'remember':$('#remember').val(),
+				},
+				success: function (data) {
+					if (data.code == 2) {
+						layer.msg(data.message, {
+							time: 2000
+						}, function () {
+							layer.closeAll();
+							$('.login').addClass('active');
+							$('.sk-rotating-plane').addClass('active');
+							$('.login').hide();
+							setTimeout(function () {
+								location.href = "/admin/index";
+							}, 1000)
+						})
+					} else {
+						layer.msg(data.message, {
+							time: 3000
+						},function () {
+							$('.captcha img').click();
+							$('input[name=captcha]').val('');
+						});
+					}
+				},
+				error: function (data) {
+					layer.msg("服务器开小差啦",function () {
+						$('.captcha img').click();
+						$('input[name=captcha]').val('');
+					});
+				}
+			});
+		})
+	});
+</script>

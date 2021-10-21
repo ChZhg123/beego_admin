@@ -1,0 +1,12 @@
+# blog configuration
+# base configuration
+base:
+  name: '博客管理后台'
+
+# mysql configuration
+mysql:
+  host: '127.0.0.1'
+  port: 3306
+  database: 'beego_blog'
+  username: 'root'
+  password: 'root'

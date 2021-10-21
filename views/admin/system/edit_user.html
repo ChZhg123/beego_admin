@@ -1,0 +1,99 @@
+{{template "admin/public/style.html" .}}
+<div class="admin-main">
+	<div class="layui-form">
+		<div class="layui-form-item">
+			<label class="layui-form-label layui-required">选择角色</label>
+			<div class="layui-input-block">
+				<select name="role_id" id="">
+					{{range $i,$v := .role}}
+						<option value="{{$v.Id}}">{{$v.Name}}</option>
+					{{end}}
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label layui-required">用户名</label>
+			<div class="layui-input-block">
+				<input type="hidden" name="id" value="{{.user.Id}}">
+				<input type="text" name="username" placeholder="请输入用户名" value="{{.user.UserName}}" autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label layui-required">名称</label>
+			<div class="layui-input-block">
+				<input type="text" name="nickname" placeholder="请输入管理员名称" value="{{.user.NickName}}" autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">联系方式</label>
+			<div class="layui-input-block">
+				<input type="number" name="phone" placeholder="请输入联系方式" value="{{.user.Phone}}" autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label layui-required">登录密码</label>
+			<div class="layui-input-block">
+				<input type="password" name="password" placeholder="请输入登录密码" value="" autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label layui-required">确认密码</label>
+			<div class="layui-input-block">
+				<input type="password" id="confirm-password" placeholder="请输入确认密码" value="" autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit="" lay-filter="submit">提交</button>
+				<button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="javascript:history.go(-1)">返回</button>
+			</div>
+		</div>
+	</div>
+	<script>
+		layui.use(['layer', 'form'], function() {
+			var $ = layui.jquery,
+					form = layui.form,
+					layer = layui.layer; //独立版的layer无需执行这一句
+			//提交
+			form.on('submit(submit)', function(data) {
+				layer.confirm('您确定要提交吗?', {
+					icon: 3,
+					title: '温馨提示'
+				}, function(index) {
+					if(!data.field.username){
+						layer.msg("用户名不能为空")
+						return;
+					}
+					if(!data.field.nickname){
+						layer.msg("名称不能为空")
+						return;
+					}
+					if(data.field.password&&data.field.password!=$("#confirm-password").val()){
+						layer.msg("确认密码有误")
+						return;
+					}
+					$.ajax({
+						url: "/admin/system/edit_user",
+						type: "POST",
+						data: data.field,
+					}).done(function (data) {
+						if (data.code == 2) {
+							layer.msg(data.message, {
+								icon: 1,
+								time: 3000
+							}, function () {
+								location.href = "/admin/system/userList";
+							});
+						} else {
+							layer.msg(data.message, {
+								icon: 2,
+								time: 3000
+							});
+						}
+					}).error(function (data) {
+						layer.msg('服务异常');
+					});
+				});
+			});
+		});
+	</script>

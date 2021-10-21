@@ -1,0 +1,104 @@
+{{template "admin/public/style.html" .}}
+<style>
+	.layui-form-label {
+		width: 120px;
+	}
+</style>
+<div class="admin-main">
+	<div class="layui-form">
+		<div class="layui-form-item">
+			<label class="layui-form-label">权限分配</label>
+			<div class="layui-input-block">
+				<input type="hidden" name="id" value="{{.id}}">
+				{{range $i,$v := .data}}
+					<div class="layui-input-block parent">
+						<div class="layui-input-inline" style="width:auto;">
+							<input type="checkbox" class="pid powers" name="power[]" lay-filter="pow" value="{{$v.Id}}" title="{{$v.Name}}" {{if eq $v.Select 1}}checked{{end}}>
+						</div>
+						{{if $v.Child}}
+							<div class="layui-input-inline" style="width:auto;">
+								{{range $j,$v1 := $v.Child}}
+									<div style="margin: 2% 0 0 0;float: left;" class="son">
+										<input type="checkbox" lay-skin="primary" class="child powers" lay-filter="power" value="{{$v1.Id}}" name="power[]" title="{{$v1.Name}}" {{if eq $v1.Select 1}}checked{{end}}>
+									</div>
+								{{end}}
+							</div>
+						{{end}}
+					</div>
+					<hr class="layui-bg-orange" width="90%" style="margin-left: 5%;">
+				{{end}}
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block" style="margin-left: 30px;text-align: center;margin-top:20px;">
+				<button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit="" lay-filter="submit">提交</button>
+				<button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="javascript:history.go(-1)">返回</button>
+			</div>
+		</div>
+	</div>
+	<script>
+		layui.use(['layer', 'form'], function() {
+			var $ = layui.jquery,
+				form = layui.form,
+				layer = layui.layer; //独立版的layer无需执行这一句
+			form.on('checkbox(power)', function(data) {
+				var pid = $(data.elem).parents('.parent').find('.pid');
+				var length = $(data.elem).parents('.parent').find('.child:checked').length;
+				if(length>1){
+					pid.prop('checked',true);
+				}else{
+					if(!data.elem.checked&&length==1){
+						pid.prop('checked',true);
+					}else{
+						pid.prop('checked',data.elem.checked);
+					}
+				}
+				form.render('checkbox');
+			});
+			form.on('checkbox(pow)', function(data) {
+				var child = $(data.elem).parents('.parent').find('.son input[type="checkbox"]');
+				child.each(function(index, item) {
+					item.checked = data.elem.checked;
+				});
+				form.render('checkbox');
+			});
+			//提交
+			form.on('submit(submit)', function(data) {
+				layer.confirm('您确定要提交吗?', {
+					icon: 3,
+					title: '温馨提示'
+				}, function(index) {
+					var power = [];
+					$('.powers').each(function () {
+						if($(this).prop('checked')){
+							power.push($(this).val())
+						}
+					})
+					$.ajax({
+						url: "/admin/system/authority",
+						type: "POST",
+						data: {
+							id:data.field.id,
+							power:JSON.stringify(power)
+						},
+					}).done(function (data) {
+						if (data.code == 2) {
+							layer.msg(data.message, {
+								icon: 1,
+								time: 3000
+							}, function () {
+								location.href = "/admin/system/roleList";
+							});
+						} else {
+							layer.msg(data.message, {
+								icon: 2,
+								time: 3000
+							});
+						}
+					}).error(function (data) {
+						layer.msg('服务异常');
+					});
+				})
+			});
+		});
+	</script>
