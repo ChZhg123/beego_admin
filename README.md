@@ -8,7 +8,7 @@ beego_admin依赖beego框架开发的一个开源且简介的管理后台
 
 #### 使用说明
 
-1.  下载安装：`git clone https://gitee.com/chengzhigang/beego_admin.git`
+1.  下载安装：`git clone https://github.com/ChZhg123/beego_admin.git`
 2.  查看config.yaml文件，新建数据库
 3.  导入数据：blog.sql
 4.  运行项目：进入项目目录，执行 `bee run`
